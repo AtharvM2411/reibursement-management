@@ -12,20 +12,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  role     String   // "ADMIN", "MANAGER", "EMPLOYEE"
+  id                    String   @id @default(uuid())
+  name                  String
+  email                 String   @unique
+  password              String
+  role                  String   // "ADMIN", "MANAGER", "EMPLOYEE"
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relations
+  expenses              Expense[]
+  approvalsGiven        Approval[] @relation("ApprovedBy")
+  approvalsRejected     Approval[] @relation("RejectedBy")
 }
 
 model Expense {
-  id          String   @id @default(uuid())
-  amount      Float
-  currency    String
-  description String
-  status      String   @default("PENDING")
-  createdAt   DateTime @default(now())
+  id                    String   @id @default(uuid())
+  amount                Float
+  currency              String
+  description           String
+  status                String   @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
+  category              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
-  userId      String
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+  
+  // Relations
+  approvals             Approval[]
+  reassignments         ApprovalReassignment[]
+}
+
+model Approval {
+  id                    String   @id @default(uuid())
+  expenseId             String
+  expense               Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  
+  status                String   // APPROVED, REJECTED, PENDING
+  
+  // Approval details
+  approvedBy            String?
+  approverUser          User?    @relation("ApprovedBy", fields: [approvedBy], references: [id])
+  comments              String?
+  
+  // Rejection details
+  rejectedBy            String?
+  rejectorUser          User?    @relation("RejectedBy", fields: [rejectedBy], references: [id])
+  rejectionReason       String?
+  
+  timestamp             DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([expenseId])
+  @@index([approvedBy])
+  @@index([rejectedBy])
+}
+
+model ApprovalReassignment {
+  id                    String   @id @default(uuid())
+  expenseId             String
+  expense               Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  
+  reassignedBy          String
+  reassignTo            String
+  reason                String?
+  
+  timestamp             DateTime @default(now())
+  createdAt             DateTime @default(now())
+  
+  @@index([expenseId])
+  @@index([reassignedBy])
 }
