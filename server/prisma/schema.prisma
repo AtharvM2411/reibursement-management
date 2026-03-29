@@ -18,3 +18,14 @@ model User {
   password String
   role     String   // "ADMIN", "MANAGER", "EMPLOYEE"
 }
+
+model Expense {
+  id          String   @id @default(uuid())
+  amount      Float
+  currency    String
+  description String
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+
+  userId      String
+}
