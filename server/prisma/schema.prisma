@@ -12,11 +12,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  role     String   // "ADMIN", "MANAGER", "EMPLOYEE"
+  id         String  @id @default(uuid())
+  name       String
+  email      String  @unique
+  password   String
+  role       String
+
+  managerId  String?
 }
 
 model Expense {
@@ -28,4 +30,14 @@ model Expense {
   createdAt   DateTime @default(now())
 
   userId      String
+}
+
+model Approval {
+  id         String   @id @default(uuid())
+  status     String   @default("PENDING")
+  comments   String?
+  step       Int
+
+  expenseId  String
+  approverId String
 }
