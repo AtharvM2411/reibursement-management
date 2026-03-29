@@ -1,134 +1,57 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { createExpense } from "../../services/expenseService";
+import { useNavigate } from "react-router-dom";
 
 export default function SubmitExpense() {
-  const [form, setForm] = useState({
-    amount: "",
-    currency: "USD",
-    category: "",
-    description: "",
-    date: "",
-    receipt: null,
-  });
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
+  const handleSubmit = async () => {
+    if (!amount || !description) {
+      alert("Fill all fields");
+      return;
+    }
 
-  const handleFileChange = (e) => {
-    setForm({ ...form, receipt: e.target.files[0] });
-  };
+    try {
+      await createExpense({
+        amount: Number(amount),
+        currency: "INR",
+        description,
+      });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted Expense:", form);
+      alert("Expense submitted");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting expense");
+    }
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-6">Submit Expense</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-xl shadow w-96">
+        <h2 className="text-xl font-bold mb-4">Submit Expense</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-2xl p-6 space-y-6"
-      >
-        {/* Amount */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Amount</label>
-          <input
-            type="number"
-            name="amount"
-            value={form.amount}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2"
-            placeholder="Enter amount"
-            required
-          />
-        </div>
+        <input
+          className="w-full p-2 mb-3 border rounded"
+          placeholder="Amount"
+          onChange={(e) => setAmount(e.target.value)}
+        />
 
-        {/* Currency */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Currency</label>
-          <select
-            name="currency"
-            value={form.currency}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2"
-          >
-            <option value="USD">USD</option>
-            <option value="INR">INR</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-          </select>
-        </div>
+        <input
+          className="w-full p-2 mb-3 border rounded"
+          placeholder="Description"
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2"
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="Travel">Travel</option>
-            <option value="Food">Food</option>
-            <option value="Accommodation">Accommodation</option>
-            <option value="Office Supplies">Office Supplies</option>
-          </select>
-        </div>
-
-        {/* Date */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
-          <input
-            type="date"
-            name="date"
-            value={form.date}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2"
-            rows="4"
-            placeholder="Enter description"
-          />
-        </div>
-
-        {/* Receipt Upload */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Upload Receipt
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Submit Expense
-          </button>
-        </div>
-      </form>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+        >
+          Submit
+        </button>
+      </div>
     </div>
   );
 }
