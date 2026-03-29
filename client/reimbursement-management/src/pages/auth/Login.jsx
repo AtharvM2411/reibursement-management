@@ -11,15 +11,12 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  // handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 🔐 handle login
   const handleLogin = async () => {
     try {
-      // basic validation
       if (!form.email || !form.password) {
         alert("Please fill all fields");
         return;
@@ -27,14 +24,27 @@ export default function Login() {
 
       const res = await login(form);
 
-      console.log("Login success:", res);
+      // store token + user
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
 
-      // redirect to dashboard
-      navigate("/dashboard");
+      // role-based redirect (YOUR ORIGINAL STRUCTURE)
+      const role = res.user.role;
+
+      if (role === "EMPLOYEE") {
+        navigate("/employee");
+      } else if (role === "MANAGER") {
+        navigate("/manager");
+      } else if (role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        alert("Unknown role");
+      }
+
     } catch (err) {
-      console.error("Login error:", err);
+      console.error(err);
       alert(
-        err?.response?.data?.message || "Invalid email or password"
+        err?.response?.data?.message || "Invalid credentials"
       );
     }
   };

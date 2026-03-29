@@ -8,40 +8,29 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
+    role: "",
   });
 
   const navigate = useNavigate();
 
-  // handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 🔐 handle signup
   const handleSignup = async () => {
     try {
-      // basic validation
-      if (!form.name || !form.email || !form.password) {
+      if (!form.name || !form.email || !form.password || !form.role) {
         alert("Please fill all fields");
         return;
       }
 
-      const res = await signup({
-        ...form,
-        role: "EMPLOYEE", // 🔥 default role
-      });
+      await signup(form);
 
-      console.log("Signup success:", res);
-
-      alert("Signup successful! Please login.");
-
-      // redirect to login
+      alert("Signup successful. Please login.");
       navigate("/");
     } catch (err) {
-      console.error("Signup error:", err);
-      alert(
-        err?.response?.data?.message || "Signup failed"
-      );
+      console.error(err);
+      alert(err?.response?.data?.message || "Signup failed");
     }
   };
 
@@ -77,13 +66,25 @@ export default function Signup() {
           onChange={handleChange}
         />
 
+        {/* 🔥 ROLE SELECT */}
+        <select
+          className="auth-input"
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+        >
+          <option value="">Select Role</option>
+          <option value="EMPLOYEE">Employee</option>
+          <option value="MANAGER">Manager</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+
         <button className="auth-button" onClick={handleSignup}>
           Signup
         </button>
 
         <p className="auth-link">
-          Already have an account?{" "}
-          <a href="/">Login</a>
+          Already have an account? <a href="/">Login</a>
         </p>
       </div>
     </div>

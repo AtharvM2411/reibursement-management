@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 export default function SubmitExpense() {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
@@ -14,17 +16,26 @@ export default function SubmitExpense() {
     }
 
     try {
+      setLoading(true); // 🔥 prevent multiple clicks
+
       await createExpense({
         amount: Number(amount),
         currency: "INR",
         description,
       });
 
-      alert("Expense submitted");
-      navigate("/dashboard");
+      // ✅ SUCCESS
+      alert("Expense submitted successfully");
+
+      navigate("/employee"); // 🔥 redirect to dashboard
+
     } catch (err) {
       console.error(err);
-      alert("Error submitting expense");
+      alert(
+        err?.response?.data?.message || "Error submitting expense"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,9 +58,14 @@ export default function SubmitExpense() {
 
         <button
           onClick={handleSubmit}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+          disabled={loading}
+          className={`w-full text-white p-2 rounded ${
+            loading
+              ? "bg-gray-400"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

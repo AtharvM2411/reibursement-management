@@ -4,40 +4,19 @@ import {
   approveExpense,
   rejectExpense,
 } from "../../services/approvalService";
-
+import Navbar from "../../components/Navbar";
 const ManagerDashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user || user.role !== "MANAGER") {
+    return <p className="p-6 text-red-500">Access Denied</p>;
+  }
+
   const [data, setData] = useState([]);
-  const [stats, setStats] = useState({
-    pending: 0,
-    approved: 0,
-    rejected: 0,
-    totalAmount: 0,
-  });
 
   const fetchData = async () => {
-    try {
-      const res = await getPendingApprovals();
-      setData(res);
-
-      const pending = res.filter(a => a.status === "PENDING").length;
-      const approved = res.filter(a => a.status === "APPROVED").length;
-      const rejected = res.filter(a => a.status === "REJECTED").length;
-
-      const totalAmount = res.reduce(
-        (sum, a) => sum + (a.expense?.amount || 0),
-        0
-      );
-
-      setStats({
-        pending,
-        approved,
-        rejected,
-        totalAmount,
-      });
-
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await getPendingApprovals();
+    setData(res);
   };
 
   useEffect(() => {
@@ -54,91 +33,69 @@ const ManagerDashboard = () => {
     fetchData();
   };
 
-  const getColor = (status) => {
-    if (status === "APPROVED") return "bg-green-500";
-    if (status === "REJECTED") return "bg-red-500";
-    return "bg-yellow-500";
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-50">
+
+  <Navbar />
+
+  <div className="p-6">
 
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
         Manager Dashboard
       </h1>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-red-100 p-4 rounded">
-          <p>Pending</p>
-          <h2>{stats.pending}</h2>
+      {/* Card */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+
+        <div className="p-4 border-b">
+          <h2 className="text-lg font-semibold text-gray-700">
+            Pending Approvals
+          </h2>
         </div>
 
-        <div className="bg-green-100 p-4 rounded">
-          <p>Approved</p>
-          <h2>{stats.approved}</h2>
-        </div>
-
-        <div className="bg-yellow-100 p-4 rounded">
-          <p>Rejected</p>
-          <h2>{stats.rejected}</h2>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow">
-          <p>Total Amount</p>
-          <h2>₹ {stats.totalAmount}</h2>
-        </div>
-      </div>
-
-      {/* Pending Approvals */}
-      <div className="bg-white rounded shadow p-4">
-        <h2 className="text-xl mb-4">Pending Approvals</h2>
-
-        {data.length === 0 ? (
-          <p>No pending approvals</p>
-        ) : (
-          <div className="space-y-3">
-            {data.map((item) => (
+        <div className="divide-y">
+          {data.length === 0 ? (
+            <p className="p-4 text-gray-500">No pending approvals</p>
+          ) : (
+            data.map(item => (
               <div
                 key={item.id}
-                className="flex justify-between items-center border p-3 rounded"
+                className="flex justify-between items-center p-4 hover:bg-gray-50"
               >
                 <div>
-                  <p className="font-semibold">
+                  <p className="font-medium text-gray-800">
                     {item.expense?.description}
                   </p>
-                  <p>₹ {item.expense?.amount}</p>
+                  <p className="text-sm text-gray-500">
+                    ₹ {item.expense?.amount}
+                  </p>
                 </div>
 
-                <div className="flex gap-2 items-center">
-
-                  <span
-                    className={`text-white px-2 py-1 rounded ${getColor(item.status)}`}
-                  >
-                    {item.status}
-                  </span>
+                <div className="flex gap-2">
 
                   <button
                     onClick={() => handleApprove(item.id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded"
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-lg text-sm"
                   >
                     Approve
                   </button>
 
                   <button
                     onClick={() => handleReject(item.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg text-sm"
                   >
                     Reject
                   </button>
 
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
+
       </div>
+    </div>
     </div>
   );
 };

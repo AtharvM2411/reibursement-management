@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyExpenses } from "../../services/expenseService";
 import { getPendingApprovals } from "../../services/approvalService";
-
+import Navbar from "../../components/Navbar";
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalExpenses: 0,
@@ -18,7 +18,7 @@ const AdminDashboard = () => {
       const expenses = await getMyExpenses();
       const approvals = await getPendingApprovals();
 
-      // 🔥 calculate stats
+      // calculate stats
       const approved = expenses.filter(e => e.status === "APPROVED").length;
       const rejected = expenses.filter(e => e.status === "REJECTED").length;
       const pending = expenses.filter(e => e.status === "PENDING").length;
@@ -48,7 +48,11 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-8">
+    <div className="min-h-screen bg-gray-50">
+
+  <Navbar />
+
+  <div className="p-6">
       {/* HEADER */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-white mb-2">
@@ -152,6 +156,7 @@ const AdminDashboard = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };

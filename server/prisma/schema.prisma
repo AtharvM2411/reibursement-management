@@ -30,7 +30,7 @@ model Expense {
   status      String     @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
   category    String?
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  updatedAt   DateTime   @default(now()) @updatedAt
   approvals   Approval[]
   userId      String
 }

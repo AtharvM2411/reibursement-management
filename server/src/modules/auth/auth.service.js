@@ -13,12 +13,31 @@ const signup = async ({ name, email, password, role }) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  // 🔥 RULE 1: Admin must exist before Manager
+  const admin = await prisma.user.findFirst({
+    where: { role: "ADMIN" },
+  });
+
+  if (role === "MANAGER" && !admin) {
+    throw new Error("Cannot create manager without admin in system");
+  }
+
+  // 🔥 find manager for employee
+  const manager = await prisma.user.findFirst({
+    where: { role: "MANAGER" },
+  });
+
+  if (role === "EMPLOYEE" && !manager) {
+    throw new Error("No manager available in system");
+  }
+
   const user = await prisma.user.create({
     data: {
       name,
       email,
       password: hashedPassword,
       role,
+      managerId: role === "EMPLOYEE" ? manager.id : null,
     },
   });
 

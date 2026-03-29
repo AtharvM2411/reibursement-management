@@ -23,7 +23,7 @@ const createExpense = async (data, userId) => {
     throw new Error("Manager not assigned to user");
   }
 
-  // 3️⃣ Create approval for manager (REAL FLOW 🔥)
+  // 3️⃣ Create approval for manager 
   await prisma.approval.create({
     data: {
       expenseId: expense.id,
