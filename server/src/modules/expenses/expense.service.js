@@ -4,7 +4,7 @@ const prisma = require("../../config/db");
 const createExpense = async (data, userId) => {
   const { amount, currency, description } = data;
 
-  //  Create expense
+  // 1️⃣ Create expense
   const expense = await prisma.expense.create({
     data: {
       amount,
@@ -14,22 +14,23 @@ const createExpense = async (data, userId) => {
     },
   });
 
-  //  Create approval steps (basic workflow)
-  await prisma.approval.createMany({
-    data: [
-      {
-        expenseId: expense.id,
-        approverId: "MANAGER_ID", // replace with real ID
-        step: 1,
-        status: "PENDING",
-      },
-      {
-        expenseId: expense.id,
-        approverId: "ADMIN_ID", // replace with real ID
-        step: 2,
-        status: "PENDING",
-      },
-    ],
+  // 2️⃣ Get user (to find manager)
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user || !user.managerId) {
+    throw new Error("Manager not assigned to user");
+  }
+
+  // 3️⃣ Create approval for manager (REAL FLOW 🔥)
+  await prisma.approval.create({
+    data: {
+      expenseId: expense.id,
+      approverId: user.managerId,
+      step: 1,
+      status: "PENDING",
+    },
   });
 
   return expense;

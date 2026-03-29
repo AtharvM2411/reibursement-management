@@ -11,6 +11,9 @@ const getPending = async (req, res, next) => {
 
 const approve = async (req, res, next) => {
   try {
+    if (!req.params.id) {
+  return res.status(400).json({ message: "Invalid approval ID" });
+}
     const data = await service.approveExpense(
       req.params.id,
       req.user.userId
@@ -23,6 +26,9 @@ const approve = async (req, res, next) => {
 
 const reject = async (req, res, next) => {
   try {
+    if (!req.params.id) {
+  return res.status(400).json({ message: "Invalid approval ID" });
+}
     const data = await service.rejectExpense(
       req.params.id,
       req.user.userId

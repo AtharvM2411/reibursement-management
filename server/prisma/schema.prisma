@@ -11,35 +11,36 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-model User {
-  id         String  @id @default(uuid())
-  name       String
-  email      String  @unique
-  password   String
-  role       String
 
-  managerId  String?
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     String
+
+  managerId String?
 }
 
 model Expense {
-  id                    String   @id @default(uuid())
-  amount                Float
-  currency              String
-  description           String
-  status                String   @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
-  category              String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
+  id          String     @id @default(uuid())
+  amount      Float
+  currency    String
+  description String
+  status      String     @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
+  category    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  approvals   Approval[]
   userId      String
 }
 
 model Approval {
-  id         String   @id @default(uuid())
-  status     String   @default("PENDING")
+  id         String  @id @default(uuid())
+  status     String  @default("PENDING")
   comments   String?
   step       Int
-
+  expense    Expense @relation(fields: [expenseId], references: [id])
   expenseId  String
   approverId String
 }

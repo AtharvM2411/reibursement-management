@@ -3,11 +3,14 @@ const prisma = require("../../config/db");
 //  Get pending approvals for logged-in user
 const getPendingApprovals = async (userId) => {
   return await prisma.approval.findMany({
-    where: {
-      approverId: userId,
-      status: "PENDING",
-    },
-  });
+  where: {
+    approverId: userId,
+    status: "PENDING",
+  },
+  include: {
+    expense: true, // 🔥 ADD THIS
+  },
+});
 };
 
 //  Approve expense
