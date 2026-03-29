@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-// import your pages
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import SubmitExpense from "./pages/SubmitExpense";
+// 🔥 correct paths based on your structure
+import Login from "./pages/auth/Login";
+import Dashboard from "./pages/dashboard/Dashboard";
+import SubmitExpense from "./pages/expenses/SubmitExpense";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Default route */}
+        {/* Default */}
         <Route path="/" element={<Login />} />
 
         {/* Other pages */}
