@@ -1,49 +1,69 @@
 import React, { useState, useEffect } from 'react';
 
-const EmployeeDashboard = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [stats, setStats] = useState({
-    totalExpenses: 0,
-    pendingAmount: 0,
-    approvedAmount: 0,
-    rejectedAmount: 0,
+const ManagerDashboard = () => {
+  const [approvals, setApprovals] = useState([]);
+  const [teamStats, setTeamStats] = useState({
+    pendingApprovals: 0,
+    totalReviewed: 0,
+    approvedThisMonth: 0,
+    rejectedThisMonth: 0,
+    teamMembers: 0,
+    totalBudgetSpent: 0,
   });
 
-  // Sample data for demo
-  const sampleExpenses = [
+  // Sample approval data
+  const sampleApprovals = [
     {
-      id: 'EXP001',
-      description: 'Flight to New York',
+      id: 'APR001',
+      employeeName: 'John Davis',
       amount: 750,
       category: 'Travel',
-      date: '2024-03-25',
-      status: 'Approved',
+      description: 'Flight to New York',
+      submittedDate: '2024-03-25',
+      status: 'Pending',
+      daysWaiting: 2,
     },
     {
-      id: 'EXP002',
-      description: 'Team lunch meeting',
+      id: 'APR002',
+      employeeName: 'Sarah Johnson',
       amount: 120,
       category: 'Meals',
-      date: '2024-03-26',
+      description: 'Team lunch meeting',
+      submittedDate: '2024-03-26',
       status: 'Pending',
+      daysWaiting: 1,
     },
     {
-      id: 'EXP003',
-      description: 'Office supplies',
-      amount: 250,
+      id: 'APR003',
+      employeeName: 'Mike Chen',
+      amount: 450,
       category: 'Office',
-      date: '2024-03-27',
-      status: 'Rejected',
+      description: 'Laptop accessories',
+      submittedDate: '2024-03-24',
+      status: 'Approved',
+      daysWaiting: 4,
+    },
+    {
+      id: 'APR004',
+      employeeName: 'Emma Wilson',
+      amount: 2500,
+      category: 'Equipment',
+      description: 'Conference registration',
+      submittedDate: '2024-03-22',
+      status: 'Approved',
+      daysWaiting: 6,
     },
   ];
 
   useEffect(() => {
-    setExpenses(sampleExpenses);
-    setStats({
-      totalExpenses: 3,
-      pendingAmount: 120,
-      approvedAmount: 750,
-      rejectedAmount: 250,
+    setApprovals(sampleApprovals);
+    setTeamStats({
+      pendingApprovals: 2,
+      totalReviewed: 45,
+      approvedThisMonth: 28,
+      rejectedThisMonth: 5,
+      teamMembers: 12,
+      totalBudgetSpent: 15240,
     });
   }, []);
 
@@ -60,163 +80,202 @@ const EmployeeDashboard = () => {
     }
   };
 
+  const getPriorityColor = (daysWaiting) => {
+    if (daysWaiting > 5) return 'border-l-4 border-red-500 bg-red-50';
+    if (daysWaiting > 3) return 'border-l-4 border-yellow-500 bg-yellow-50';
+    return 'border-l-4 border-green-500 bg-green-50';
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">👋 Welcome, Employee</h1>
-        <p className="text-gray-600">Manage your expense requests and track approvals</p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">📊 Manager Dashboard</h1>
+        <p className="text-gray-600">Review and manage team expense approvals</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Total Expenses */}
-        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {/* Pending Approvals */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500 hover:shadow-xl transition">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm font-medium">Total Expenses</p>
-              <h2 className="text-3xl font-bold text-gray-800">{stats.totalExpenses}</h2>
-            </div>
-            <span className="text-4xl">📊</span>
-          </div>
-        </div>
-
-        {/* Pending Amount */}
-        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-yellow-500 hover:shadow-xl transition">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm font-medium">Pending Amount</p>
-              <h2 className="text-3xl font-bold text-yellow-600">${stats.pendingAmount}</h2>
+              <p className="text-gray-600 text-sm font-medium">Pending Approvals</p>
+              <h2 className="text-3xl font-bold text-red-600">{teamStats.pendingApprovals}</h2>
             </div>
             <span className="text-4xl">⏳</span>
           </div>
         </div>
 
-        {/* Approved Amount */}
-        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition">
+        {/* Total Reviewed */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm font-medium">Approved Amount</p>
-              <h2 className="text-3xl font-bold text-green-600">${stats.approvedAmount}</h2>
+              <p className="text-gray-600 text-sm font-medium">Total Reviewed</p>
+              <h2 className="text-3xl font-bold text-blue-600">{teamStats.totalReviewed}</h2>
             </div>
             <span className="text-4xl">✅</span>
           </div>
         </div>
 
-        {/* Rejected Amount */}
-        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500 hover:shadow-xl transition">
+        {/* Approved This Month */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm font-medium">Rejected Amount</p>
-              <h2 className="text-3xl font-bold text-red-600">${stats.rejectedAmount}</h2>
+              <p className="text-gray-600 text-sm font-medium">Approved This Month</p>
+              <h2 className="text-3xl font-bold text-green-600">{teamStats.approvedThisMonth}</h2>
+            </div>
+            <span className="text-4xl">📈</span>
+          </div>
+        </div>
+
+        {/* Rejected This Month */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500 hover:shadow-xl transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 text-sm font-medium">Rejected This Month</p>
+              <h2 className="text-3xl font-bold text-orange-600">{teamStats.rejectedThisMonth}</h2>
             </div>
             <span className="text-4xl">❌</span>
           </div>
         </div>
+
+        {/* Team Members */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 text-sm font-medium">Team Members</p>
+              <h2 className="text-3xl font-bold text-purple-600">{teamStats.teamMembers}</h2>
+            </div>
+            <span className="text-4xl">👥</span>
+          </div>
+        </div>
+
+        {/* Total Budget Spent */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-indigo-500 hover:shadow-xl transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 text-sm font-medium">Budget Spent (Month)</p>
+              <h2 className="text-3xl font-bold text-indigo-600">${teamStats.totalBudgetSpent.toLocaleString()}</h2>
+            </div>
+            <span className="text-4xl">💰</span>
+          </div>
+        </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* Quick Actions */}
       <div className="flex gap-4 mb-8 flex-wrap">
-        <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
-          ➕ Create New Expense
+        <button className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
+          🔴 Review Pending ({teamStats.pendingApprovals})
         </button>
-        <button className="bg-white border-2 border-blue-500 text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition">
-          📋 View All Expenses
+        <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
+          👥 View Team Expenses
+        </button>
+        <button className="bg-white border-2 border-indigo-500 text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition">
+          📊 Generate Report
         </button>
       </div>
 
-      {/* Recent Expenses Table */}
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6 border-b-2 border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-800">📝 Recent Expenses</h2>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Amount</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {expenses.map((expense, idx) => (
-                <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 text-gray-800 font-medium">{expense.description}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      {expense.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-green-600">${expense.amount}</td>
-                  <td className="px-6 py-4 text-gray-600">{expense.date}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(expense.status)}`}>
-                      {expense.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-        {/* Monthly Summary */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">📈 Monthly Summary</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">This Month:</span>
-              <span className="font-bold text-lg text-gray-800">$1,120</span>
+      {/* Pending Approvals Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Pending List */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6 border-b-2 border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-800">📋 Pending Approvals</h2>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Last Month:</span>
-              <span className="font-bold text-lg text-gray-800">$2,450</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Budget Remaining:</span>
-              <span className="font-bold text-lg text-green-600">$3,880</span>
+
+            <div className="space-y-3 p-6">
+              {approvals
+                .filter((a) => a.status === 'Pending')
+                .map((approval, idx) => (
+                  <div key={idx} className={`p-4 rounded-lg ${getPriorityColor(approval.daysWaiting)}`}>
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-800">{approval.employeeName}</h3>
+                        <p className="text-gray-600 text-sm">{approval.description}</p>
+                      </div>
+                      <span className="text-2xl font-bold text-gray-800">${approval.amount}</span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 items-center justify-between">
+                      <div className="flex gap-3">
+                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
+                          {approval.category}
+                        </span>
+                        <span className="text-gray-600 text-sm">
+                          Submitted: {approval.submittedDate} ({approval.daysWaiting} days)
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-semibold transform hover:scale-105 transition">
+                          ✓ Approve
+                        </button>
+                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-semibold transform hover:scale-105 transition">
+                          ✕ Reject
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
 
-        {/* Approval Status */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">🔄 Approval Status</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                Awaiting Approval
-              </span>
-              <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
-                1
-              </span>
+        {/* Right Sidebar */}
+        <div className="space-y-6">
+          {/* Approval Summary */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Summary</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Waiting Approval:</span>
+                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-bold">
+                  {approvals.filter((a) => a.status === 'Pending').length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Approved:</span>
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold">
+                  {approvals.filter((a) => a.status === 'Approved').length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+                <span className="text-gray-600 font-semibold">Avg Review Time:</span>
+                <span className="font-bold text-lg">2.3 days</span>
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                Approved This Month
-              </span>
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                2
-              </span>
+          </div>
+
+          {/* Team Performance */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 Performance</h3>
+            <div className="space-y-3">
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm text-gray-600">Approval Rate</span>
+                  <span className="text-sm font-bold">85%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm text-gray-600">Rejection Rate</span>
+                  <span className="text-sm font-bold">15%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-red-500 h-2 rounded-full" style={{ width: '15%' }}></div>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-                Rejected
-              </span>
-              <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
-                1
-              </span>
-            </div>
+          </div>
+
+          {/* Quick Info */}
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+            <h3 className="text-xl font-bold mb-4">💡 Tip</h3>
+            <p className="text-sm">Review pending approvals regularly to maintain team workflow efficiency. Delays can impact employee reimbursements.</p>
           </div>
         </div>
       </div>
@@ -224,4 +283,4 @@ const EmployeeDashboard = () => {
   );
 };
 
-export default EmployeeDashboard;
+export default ManagerDashboard;
