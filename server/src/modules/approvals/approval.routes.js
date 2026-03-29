@@ -10,7 +10,7 @@ const roleMiddleware = require("../../middleware/roleMiddleware");
 
 const router = express.Router();
 
-// manager/admin only
+// Manager/Admin → view pending approvals
 router.get(
   "/pending",
   authMiddleware,
@@ -18,6 +18,7 @@ router.get(
   getPending
 );
 
+// Approve
 router.post(
   "/:id/approve",
   authMiddleware,
@@ -25,6 +26,7 @@ router.post(
   approve
 );
 
+// Reject
 router.post(
   "/:id/reject",
   authMiddleware,

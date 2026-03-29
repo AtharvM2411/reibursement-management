@@ -33,4 +33,8 @@ const reject = async (req, res, next) => {
   }
 };
 
-module.exports = { getPending, approve, reject };
+module.exports = {
+  getPending,
+  approve,
+  reject,
+};

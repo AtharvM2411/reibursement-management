@@ -1,6 +1,6 @@
 const prisma = require("../../config/db");
 
-// get pending approvals for logged-in user
+//  Get pending approvals for logged-in user
 const getPendingApprovals = async (userId) => {
   return await prisma.approval.findMany({
     where: {
@@ -10,7 +10,7 @@ const getPendingApprovals = async (userId) => {
   });
 };
 
-// approve expense
+//  Approve expense
 const approveExpense = async (approvalId, userId) => {
   const approval = await prisma.approval.findUnique({
     where: { id: approvalId },
@@ -22,32 +22,34 @@ const approveExpense = async (approvalId, userId) => {
     throw new Error("Not authorized");
   }
 
-  // mark current approval as approved
+  // mark this step approved
   await prisma.approval.update({
     where: { id: approvalId },
     data: { status: "APPROVED" },
   });
 
-  // check next step
-  const nextApproval = await prisma.approval.findFirst({
+  // check if next step exists
+  const nextStep = await prisma.approval.findFirst({
     where: {
       expenseId: approval.expenseId,
       step: approval.step + 1,
     },
   });
 
-  if (!nextApproval) {
-    // final approval → mark expense approved
-    await prisma.expense.update({
-      where: { id: approval.expenseId },
-      data: { status: "APPROVED" },
-    });
+  if (nextStep) {
+    return { message: "Step approved, waiting for next approver" };
   }
 
-  return { message: "Approved successfully" };
+  // no next step → final approval
+  await prisma.expense.update({
+    where: { id: approval.expenseId },
+    data: { status: "APPROVED" },
+  });
+
+  return { message: "Expense fully approved" };
 };
 
-// reject expense
+//  Reject expense
 const rejectExpense = async (approvalId, userId) => {
   const approval = await prisma.approval.findUnique({
     where: { id: approvalId },
@@ -71,7 +73,7 @@ const rejectExpense = async (approvalId, userId) => {
     data: { status: "REJECTED" },
   });
 
-  return { message: "Rejected successfully" };
+  return { message: "Expense rejected" };
 };
 
 module.exports = {
