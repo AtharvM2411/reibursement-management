@@ -22,7 +22,7 @@ const signup = async ({ name, email, password, role }) => {
     throw new Error("Cannot create manager without admin in system");
   }
 
-  // 🔥 find manager for employee
+  // find manager for employee
   const manager = await prisma.user.findFirst({
     where: { role: "MANAGER" },
   });

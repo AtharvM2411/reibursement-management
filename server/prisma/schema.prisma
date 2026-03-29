@@ -18,7 +18,7 @@ model User {
   email    String @unique
   password String
   role     String
-
+  rules    Rule[]
   managerId String?
 }
 
@@ -43,4 +43,19 @@ model Approval {
   expense    Expense @relation(fields: [expenseId], references: [id])
   expenseId  String
   approverId String
+}
+
+
+model Rule {
+  id         Int      @id @default(autoincrement())
+
+  // ❌ removed enum → use string instead
+  type       String   // "PERCENTAGE" | "SPECIFIC_APPROVER"
+
+  value      Int?     // for percentage
+  approverId String?     
+
+  createdAt  DateTime @default(now())
+
+  approver   User?    @relation(fields: [approverId], references: [id])
 }
