@@ -4,5 +4,8 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
     "zustand": "^5.0.12"
-  }
+  },
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
 }
