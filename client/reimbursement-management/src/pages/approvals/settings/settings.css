@@ -1,0 +1,29 @@
+.settings-container {
+  padding: 20px;
+}
+
+.settings-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.settings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.settings-table th, .settings-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.settings-table th {
+  background-color: #f3f4f6;
+}
+
+.rule-box {
+  background: #f9fafb;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
