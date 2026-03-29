@@ -22,12 +22,14 @@ model User {
 }
 
 model Expense {
-  id          String   @id @default(uuid())
-  amount      Float
-  currency    String
-  description String
-  status      String   @default("PENDING")
-  createdAt   DateTime @default(now())
+  id                    String   @id @default(uuid())
+  amount                Float
+  currency              String
+  description           String
+  status                String   @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
+  category              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   userId      String
 }
