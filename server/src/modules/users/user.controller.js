@@ -1,7 +1,6 @@
 const prisma = require("../../config/db");
 const getUsers = async (req, res) => {
   try {
-    console.log("GET USERS CALLED");
     const users = await prisma.user.findMany({
       select: {
         id: true,

@@ -13,7 +13,7 @@ const signup = async ({ name, email, password, role }) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 🔥 RULE 1: Admin must exist before Manager
+  // RULE 1: Admin must exist before Manager
   const admin = await prisma.user.findFirst({
     where: { role: "ADMIN" },
   });

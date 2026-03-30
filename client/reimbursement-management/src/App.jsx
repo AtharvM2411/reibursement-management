@@ -37,7 +37,7 @@ function App() {
         <Route path="/submit" element={<SubmitExpense />} />
         <Route path="/expenses" element={<Expenses />} />
 
-        {/* ✅ Settings routes (IMPORTANT) */}
+        {/*  Settings routes (IMPORTANT) */}
         <Route path="/settings/users" element={<Users />} />
         <Route path="/settings/rules" element={<Rules />} />
 

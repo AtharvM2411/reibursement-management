@@ -2,8 +2,9 @@ const express = require("express");
 const {
   createExpense,
   getMyExpenses,
+  getAllExpenses
 } = require("./expense.controller");
-
+const upload = require("../../utils/upload");
 const authMiddleware = require("../../middleware/authMiddleware");
 const roleMiddleware = require("../../middleware/roleMiddleware");
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post(
   "/",
   authMiddleware,
+  upload.single("receipt"),
   roleMiddleware("EMPLOYEE"),
   createExpense
 );
@@ -24,5 +26,7 @@ router.get(
   roleMiddleware("EMPLOYEE"),
   getMyExpenses
 );
+
+router.get("/all", authMiddleware, admin,roleMiddleware("ADMIN"), getAllExpenses);
 
 module.exports = router;

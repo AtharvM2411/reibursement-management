@@ -7,9 +7,13 @@ const getPendingApprovals = async (userId) => {
     approverId: userId,
     status: "PENDING",
   },
-  include: {
-    expense: true, // 🔥 ADD THIS
+ include: {
+  expense: {
+    include: {
+      user: true, 
+    },
   },
+},
 });
 };
 

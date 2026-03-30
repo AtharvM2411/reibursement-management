@@ -20,6 +20,7 @@ model User {
   role     String
   rules    Rule[]
   managerId String?
+  expenses  Expense[]
 }
 
 model Expense {
@@ -27,12 +28,14 @@ model Expense {
   amount      Float
   currency    String
   description String
+  receiptUrl  String?
   status      String     @default("PENDING") // PENDING, APPROVED, REJECTED, UNDER_REVIEW
   category    String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @default(now()) @updatedAt
   approvals   Approval[]
   userId      String
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Approval {
@@ -49,7 +52,6 @@ model Approval {
 model Rule {
   id         Int      @id @default(autoincrement())
 
-  // ❌ removed enum → use string instead
   type       String   // "PERCENTAGE" | "SPECIFIC_APPROVER"
 
   value      Int?     // for percentage

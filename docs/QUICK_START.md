@@ -2,15 +2,15 @@
 
 ## ⚡ 5-Minute Setup
 
-### Step 1: Create Database Tables (1 min)
+### Step 1: Create Database Tables (<1 min)
 
 ```bash
 cd server
-npx prisma migrate dev --name add_approvals
+npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-### Step 2: Register Routes (1 min)
+### Step 2: Register Routes (<1 min)
 
 Edit `server/src/routes/index.js`:
 

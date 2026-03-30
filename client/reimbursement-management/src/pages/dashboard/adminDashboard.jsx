@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyExpenses } from "../../services/expenseService";
 import { getPendingApprovals } from "../../services/approvalService";
+import { getAllExpenses } from "../../services/expenseService";
 import Navbar from "../../components/Navbar";
 
 const AdminDashboard = () => {
@@ -19,7 +20,7 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const expenses = await getMyExpenses();
+      const expenses = await getAllExpenses();
       await getPendingApprovals();
 
       const approved = expenses.filter(e => e.status === "APPROVED").length;
