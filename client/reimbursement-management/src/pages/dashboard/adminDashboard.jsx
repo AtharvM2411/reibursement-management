@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     totalAmount: 0,
   });
 
-  // 🔥 Fetch data
+  //  Fetch data
   const fetchData = async () => {
     try {
       const data = await getAllExpenses();
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  // 🔥 Filtering logic
+  //  Filtering logic
   const filteredExpenses = expenses.filter((e) => {
     if (filters.status !== "ALL" && e.status !== filters.status) return false;
     if (filters.user !== "ALL" && e.user?.name !== filters.user) return false;
@@ -54,7 +54,7 @@ const AdminDashboard = () => {
     return true;
   });
 
-  // 🔥 Stats calculation
+  //  Stats calculation
   useEffect(() => {
     const approved = filteredExpenses.filter(e => e.status === "APPROVED").length;
     const rejected = filteredExpenses.filter(e => e.status === "REJECTED").length;
