@@ -7,6 +7,7 @@ const {
 const upload = require("../../utils/upload");
 const authMiddleware = require("../../middleware/authMiddleware");
 const roleMiddleware = require("../../middleware/roleMiddleware");
+const { isAdmin } = require("../../middleware/adminMiddleware");
 
 const router = express.Router();
 
@@ -27,6 +28,6 @@ router.get(
   getMyExpenses
 );
 
-router.get("/all", authMiddleware, admin,roleMiddleware("ADMIN"), getAllExpenses);
+router.get("/all", authMiddleware,isAdmin,roleMiddleware("ADMIN"), getAllExpenses);
 
 module.exports = router;
