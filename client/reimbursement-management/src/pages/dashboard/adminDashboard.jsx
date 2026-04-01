@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllExpenses } from "../../services/expenseService";
 import Navbar from "../../components/Navbar";
@@ -16,15 +16,7 @@ const AdminDashboard = () => {
     toDate: "",
   });
 
-  const [stats, setStats] = useState({
-    totalExpenses: 0,
-    approved: 0,
-    rejected: 0,
-    pending: 0,
-    totalAmount: 0,
-  });
-
-  //  Fetch data
+  // 🔹 Fetch data
   const fetchData = async () => {
     try {
       const data = await getAllExpenses();
@@ -41,37 +33,47 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  //  Filtering logic
-  const filteredExpenses = expenses.filter((e) => {
-    if (filters.status !== "ALL" && e.status !== filters.status) return false;
-    if (filters.user !== "ALL" && e.user?.name !== filters.user) return false;
+  // 🔹 Memoized filtering (FIXED)
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter((e) => {
+      if (filters.status !== "ALL" && e.status !== filters.status) return false;
+      if (filters.user !== "ALL" && e.user?.name !== filters.user) return false;
 
-    const created = new Date(e.createdAt);
+      const created = new Date(e.createdAt);
 
-    if (filters.fromDate && created < new Date(filters.fromDate)) return false;
-    if (filters.toDate && created > new Date(filters.toDate)) return false;
+      if (filters.fromDate && created < new Date(filters.fromDate)) return false;
+      if (filters.toDate && created > new Date(filters.toDate)) return false;
 
-    return true;
-  });
+      return true;
+    });
+  }, [expenses, filters]);
 
-  //  Stats calculation
-  useEffect(() => {
-    const approved = filteredExpenses.filter(e => e.status === "APPROVED").length;
-    const rejected = filteredExpenses.filter(e => e.status === "REJECTED").length;
-    const pending = filteredExpenses.filter(e => e.status === "PENDING").length;
+  // 🔹 Memoized stats (FIXED - no useEffect loop)
+  const stats = useMemo(() => {
+    const approved = filteredExpenses.filter(
+      (e) => e.status === "APPROVED"
+    ).length;
+
+    const rejected = filteredExpenses.filter(
+      (e) => e.status === "REJECTED"
+    ).length;
+
+    const pending = filteredExpenses.filter(
+      (e) => e.status === "PENDING"
+    ).length;
 
     const totalAmount = filteredExpenses.reduce(
       (sum, e) => sum + (e.amount || 0),
       0
     );
 
-    setStats({
+    return {
       totalExpenses: filteredExpenses.length,
       approved,
       rejected,
       pending,
       totalAmount,
-    });
+    };
   }, [filteredExpenses]);
 
   return (
